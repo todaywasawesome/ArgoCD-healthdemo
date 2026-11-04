@@ -23,6 +23,6 @@ argocd CLI, and do not change anything else.
 
 ---
 
-What a good run looks like: `get_application` shows ConfigMap `demo-settings` Degraded with
+What a good run looks like (rehearsed 2026-11-04, ~30 s): `get_application_resource_tree` shows ConfigMap `demo-settings` Degraded with
 "DEMO_STATE is broken: set it to ok and sync again" → agent edits `DEMO_STATE: ok` → pushes →
 `sync_application` → `get_application` shows Healthy.

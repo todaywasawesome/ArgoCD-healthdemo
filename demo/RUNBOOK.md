@@ -199,11 +199,40 @@ npm `argocd-mcp@0.9.0`, run with `npx argocd-mcp@0.9.0 stdio`, env `ARGOCD_BASE_
 `ARGOCD_API_TOKEN`, plus `NODE_TLS_REJECT_UNAUTHORIZED=0` for the self-signed certificate.
 Registered by `scripts/register-mcp.sh` (local scope, token read from `.demo-credentials`).
 
-**Status: not yet run end to end.** Registering an MCP server changes Claude Code's own config,
-and the build session was not permitted to do that. Run `scripts/register-mcp.sh`, restart
-Claude Code, then do one rehearsal with the prompt.
+**Status: run end to end once (2026-11-04), no help needed, nothing blocked.** Starting state:
+`scripts/reset.sh`, `apply-config.sh ConfigMap`, `set-demo-state.sh broken`, sync. What the agent did:
 
-What *was* verified is the permission path the MCP server uses, with the `demo-agent` token
+1. `get_application_resource_tree config-demo` (MCP, as `demo-agent`):
+   `ConfigMap demo-settings: Degraded - "DEMO_STATE is broken: set it to ok and sync again"`.
+   `get_application` returns the same message, plus app health "Caused by ConfigMap:config-demo/demo-settings".
+2. Read `apps/config-demo/configmap.yaml` on `origin/demo-live` (`DEMO_STATE: broken`), changed it to
+   `ok`, committed unsigned, pushed to `demo-live` → `b68726e`.
+3. `sync_application config-demo` (MCP): accepted, `initiatedBy: demo-agent`, revision `b68726e`.
+4. `get_application_resource_tree` again: `demo-settings: Healthy - "ConfigMap ok"`.
+
+Confirmed from the CLI (`demo/out/E-agent-run.txt`):
+
+```
+app config-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  ConfigMap/demo-settings: Healthy - ConfigMap ok
+$ argocd app history config-demo
+1       2026-11-04 06:28:46 -0700 MST  demo-live (a188734)    <- scripted broken state
+2       2026-11-04 06:29:10 -0700 MST  demo-live (b68726e)    <- agent's fix
+```
+
+Diagnose to Healthy took about 30 s.
+
+**Talking point:** the health message is the interface. Because the Lua check says *what's wrong
+and how to fix it*, an agent holding a read-and-sync-only token can close the loop with nothing
+but the MCP server and Git. The same message helps the human on call.
+
+**Rehearsal notes:**
+- `get_application` returns the full object including `managedFields` (very long).
+  `get_application_resource_tree` is the short answer, so it's the better call to show on screen.
+- The run passed `applicationNamespace: argocd` explicitly on every call.
+
+Permission path the MCP server uses, verified separately, with the `demo-agent` token
 (`demo/out/E-permissions.txt`):
 
 ```
