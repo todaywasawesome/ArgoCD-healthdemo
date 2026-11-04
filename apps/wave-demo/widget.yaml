@@ -1,0 +1,8 @@
+apiVersion: healthdemo.example.io/v1
+kind: Widget
+metadata:
+  name: wave-widget
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  size: 1

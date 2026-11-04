@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lb-demo
+  namespace: argocd
+  finalizers: [resources-finalizer.argocd.argoproj.io]
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/todaywasawesome/ArgoCD-healthdemo.git
+    targetRevision: demo-live
+    path: apps/lb-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lb-demo
+  syncPolicy:
+    syncOptions: [CreateNamespace=true]
