@@ -1,0 +1,4 @@
+ghcr.io/dexidp/dex:v2.46.0
+public.ecr.aws/docker/library/redis:8.10.1-alpine
+quay.io/argoproj/argocd:v3.6.0
+docker.io/library/nginx:1.29.0-alpine

@@ -1,0 +1,4 @@
+data:
+  policy.csv: |
+    p, demo-agent, applications, get, default/*, allow
+    p, demo-agent, applications, sync, default/*, allow
