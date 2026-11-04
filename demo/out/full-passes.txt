@@ -1,0 +1,16 @@
+=== PASS 1
+reset done in 12s
+PASS demo A
+PASS demo B
+PASS demo C
+PASS demo D
+12
+=== PASS 1 CLEAN (42s)
+=== PASS 2
+reset done in 13s
+PASS demo A
+PASS demo B
+PASS demo C
+PASS demo D
+12
+=== PASS 2 CLEAN (41s)

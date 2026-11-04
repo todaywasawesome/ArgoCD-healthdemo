@@ -1,0 +1,17 @@
+OK    kind cluster healthdemo exists
+OK    both nodes Ready
+OK    Argo CD deployments available
+OK    application controller ready
+OK    port-forward https://localhost:8080
+OK    demo-agent token valid
+OK    admin login works
+OK    Widget CRD installed
+OK    repo reachable from Argo CD
+OK    image ghcr.io/dexidp/dex:v2.46.0 on healthdemo-control-plane
+OK    image ghcr.io/dexidp/dex:v2.46.0 on healthdemo-worker
+OK    image public.ecr.aws/docker/library/redis:8.10.1-alpine on healthdemo-control-plane
+OK    image public.ecr.aws/docker/library/redis:8.10.1-alpine on healthdemo-worker
+OK    image quay.io/argoproj/argocd:v3.6.0 on healthdemo-control-plane
+OK    image quay.io/argoproj/argocd:v3.6.0 on healthdemo-worker
+OK    image docker.io/library/nginx:1.29.0-alpine on healthdemo-control-plane
+OK    image docker.io/library/nginx:1.29.0-alpine on healthdemo-worker

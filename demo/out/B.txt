@@ -1,0 +1,22 @@
+$ scripts/health.sh widget-demo
+app widget-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  Widget/demo-widget: - - 
+$ apply-config.sh healthdemo.example.io_Widget
+configmap/argocd-cm patched
+$ scripts/health.sh widget-demo
+app widget-demo: Synced / Progressing
+  operation: Succeeded - successfully synced (all tasks run)
+  Widget/demo-widget: Progressing - Waiting for controller to reconcile
+$ set-widget-status.sh demo-widget failed
+widget.healthdemo.example.io/demo-widget patched
+$ scripts/health.sh widget-demo
+app widget-demo: Synced / Degraded
+  operation: Succeeded - successfully synced (all tasks run)
+  Widget/demo-widget: Degraded - Backend unavailable: cannot allocate widget
+$ set-widget-status.sh demo-widget ready
+widget.healthdemo.example.io/demo-widget patched
+$ scripts/health.sh widget-demo
+app widget-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  Widget/demo-widget: Healthy - Widget is ready

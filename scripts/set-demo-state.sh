@@ -10,5 +10,6 @@ git fetch -q origin demo-live
 cd .live && git checkout -q --detach origin/demo-live
 sed -i.bak -E "s/DEMO_STATE: .*/DEMO_STATE: $state/" apps/config-demo/configmap.yaml && rm -f apps/config-demo/configmap.yaml.bak
 git diff --quiet && { echo "DEMO_STATE already $state"; exit 0; }
-git commit -qam "config-demo: DEMO_STATE=$state"
+# demo-live is throwaway (reset.sh force-pushes it), so skip signing: no 1Password prompt mid-talk
+git -c commit.gpgsign=false commit -qam "config-demo: DEMO_STATE=$state"
 git push -q origin HEAD:demo-live && echo "pushed DEMO_STATE=$state to demo-live ($(git rev-parse --short HEAD))"
