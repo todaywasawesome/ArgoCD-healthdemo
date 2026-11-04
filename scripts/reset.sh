@@ -30,7 +30,7 @@ echo "== restore Git: demo-live <- demo-build ($(git rev-parse --short demo-buil
 git push -q --force origin refs/heads/demo-build:refs/heads/demo-live
 
 echo "== recreate apps"
-$K apply -f argocd-apps/ >/dev/null
+$K apply -f argocd-apps/ >/dev/null 2>&1
 for a in config-demo widget-demo lb-demo; do
   argocd app sync "$a" --timeout 60 >/dev/null
 done
