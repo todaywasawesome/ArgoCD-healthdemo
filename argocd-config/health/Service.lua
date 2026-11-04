@@ -1,3 +1,4 @@
+-- Key is "Service" (core group has no group prefix; "v1_Service" would never match).
 -- Same as the built-in Service check, but with an actionable message for LoadBalancers.
 hs = {}
 hs.status = "Healthy"
