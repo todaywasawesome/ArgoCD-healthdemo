@@ -1,16 +1,16 @@
 === PASS 1
-reset done in 12s
+test-health: 12/12
+reset done in 14s
 PASS demo A
 PASS demo B
 PASS demo C
 PASS demo D
-12
-=== PASS 1 CLEAN (42s)
+=== PASS 1 CLEAN (40s)
 === PASS 2
-reset done in 13s
+test-health: 12/12
+reset done in 14s
 PASS demo A
 PASS demo B
 PASS demo C
 PASS demo D
-12
-=== PASS 2 CLEAN (41s)
+=== PASS 2 CLEAN (38s)

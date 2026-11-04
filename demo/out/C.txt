@@ -13,6 +13,7 @@ app wave-demo: OutOfSync / Progressing
   Widget/wave-widget: Progressing - Waiting for controller to reconcile
 $ set-widget-status.sh wave-widget ready
 widget.healthdemo.example.io/wave-widget patched
+$ argocd app wait wave-demo --sync --health --timeout 120
 $ scripts/health.sh wave-demo
 app wave-demo: Synced / Healthy
   operation: Succeeded - successfully synced (all tasks run)

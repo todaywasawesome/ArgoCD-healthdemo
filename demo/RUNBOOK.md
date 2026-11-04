@@ -7,7 +7,7 @@
 - **Captured:** 2026-11-04 from real runs (`scripts/run-demos.sh` writes `demo/out/*.txt`; the
   blocks below are copied from those files).
 - **Verified:** `scripts/reset.sh` → `scripts/run-demos.sh` → `scripts/test-health.sh`, twice in a
-  row, both clean (`demo/out/full-passes.txt`): reset 12–13 s, a full pass about 42 s.
+  row, both clean (`demo/out/full-passes.txt`): reset 12–14 s, a full pass about 40 s.
 
 ## Before the talk
 
