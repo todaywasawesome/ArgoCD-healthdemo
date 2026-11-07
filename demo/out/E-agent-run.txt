@@ -1,0 +1,3 @@
+app config-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  ConfigMap/demo-settings: Healthy - ConfigMap ok

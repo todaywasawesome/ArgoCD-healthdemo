@@ -1,0 +1,13 @@
+$ scripts/health.sh lb-demo
+app lb-demo: Synced / Progressing
+  operation: Succeeded - successfully synced (all tasks run)
+  Service/public-web: Progressing - 
+$ kubectl --context kind-healthdemo -n lb-demo get svc public-web
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+public-web   LoadBalancer   10.96.183.212   <pending>     80:31598/TCP   22s
+$ apply-config.sh Service
+configmap/argocd-cm patched
+$ scripts/health.sh lb-demo
+app lb-demo: Synced / Progressing
+  operation: Succeeded - successfully synced (all tasks run)
+  Service/public-web: Progressing - Waiting for an external address: is a load balancer controller installed?

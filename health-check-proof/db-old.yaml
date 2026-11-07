@@ -1,0 +1,10 @@
+apiVersion: example.io/v1
+kind: Database
+metadata:
+  name: orders-db
+status:
+  conditions:
+    - type: Ready
+      status: "False"
+      reason: Provisioning
+      lastTransitionTime: "2026-11-06T23:24:27Z"

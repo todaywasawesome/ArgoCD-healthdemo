@@ -1,0 +1,4 @@
+apiVersion: healthdemo.example.io/v1
+kind: Widget
+metadata: {name: w, generation: 2}
+spec: {size: 1}

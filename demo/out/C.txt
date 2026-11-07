@@ -1,0 +1,22 @@
+$ apply-config.sh healthdemo.example.io_Widget
+configmap/argocd-cm patched (no change)
+$ argocd app sync wave-demo --async
+$ scripts/health.sh wave-demo
+app wave-demo: OutOfSync / Progressing
+  operation: Running - waiting for healthy state of healthdemo.example.io/Widget/wave-widget
+  Deployment/web: Missing - 
+  Widget/wave-widget: Progressing - Waiting for controller to reconcile
+$ scripts/health.sh wave-demo
+app wave-demo: OutOfSync / Progressing
+  operation: Running - waiting for healthy state of healthdemo.example.io/Widget/wave-widget
+  Deployment/web: Missing - 
+  Widget/wave-widget: Progressing - Waiting for controller to reconcile
+$ set-widget-status.sh wave-widget ready
+widget.healthdemo.example.io/wave-widget patched
+$ argocd app wait wave-demo --sync --health --timeout 120
+$ scripts/health.sh wave-demo
+app wave-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  Deployment/web: Healthy - 
+  Widget/wave-widget: Healthy - Widget is ready
+TIMING: wave 1 held for 8s (until the Widget turned Ready); wave 1 done 1s after Ready

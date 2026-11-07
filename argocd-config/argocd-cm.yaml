@@ -1,0 +1,64 @@
+apiVersion: v1
+data:
+  resource.customizations.health.ConfigMap: |
+    hs = {}
+    hs.status = "Healthy"
+    hs.message = "ConfigMap ok"
+    if obj.metadata.labels ~= nil and obj.metadata.labels["healthdemo/check"] == "true" then
+      if obj.data ~= nil and obj.data.DEMO_STATE == "broken" then
+        hs.status = "Degraded"
+        hs.message = "DEMO_STATE is broken: set it to ok and sync again"
+      end
+    end
+    return hs
+  resource.customizations.health.Service: |
+    -- Key is "Service" (core group has no group prefix; "v1_Service" would never match).
+    -- Same as the built-in Service check, but with an actionable message for LoadBalancers.
+    hs = {}
+    hs.status = "Healthy"
+    hs.message = "Service ok"
+    if obj.spec ~= nil and obj.spec.type == "LoadBalancer" then
+      local ingress = nil
+      if obj.status ~= nil and obj.status.loadBalancer ~= nil then
+        ingress = obj.status.loadBalancer.ingress
+      end
+      if ingress == nil or #ingress == 0 then
+        hs.status = "Progressing"
+        hs.message = "Waiting for an external address: is a load balancer controller installed?"
+      end
+    end
+    return hs
+  resource.customizations.health.healthdemo.example.io_Widget: |
+    hs = {}
+    hs.status = "Progressing"
+    hs.message = "Waiting for controller to reconcile"
+    if obj.status == nil then
+      return hs
+    end
+    if obj.status.observedGeneration ~= nil and obj.metadata.generation ~= nil
+       and obj.status.observedGeneration < obj.metadata.generation then
+      hs.message = "Controller has not observed generation " .. obj.metadata.generation
+      return hs
+    end
+    if obj.status.conditions ~= nil then
+      for _, c in ipairs(obj.status.conditions) do
+        if c.type == "Ready" then
+          if c.status == "True" then
+            hs.status = "Healthy"
+            hs.message = c.message or "Ready"
+            return hs
+          elseif c.status == "False" then
+            hs.status = "Degraded"
+            hs.message = c.message or c.reason or "Not ready"
+            return hs
+          end
+        end
+      end
+    end
+    return hs
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd

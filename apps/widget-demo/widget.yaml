@@ -1,0 +1,6 @@
+apiVersion: healthdemo.example.io/v1
+kind: Widget
+metadata:
+  name: demo-widget
+spec:
+  size: 3

@@ -1,0 +1,16 @@
+=== PASS 1
+test-health: 12/12
+reset done in 14s
+PASS demo A
+PASS demo B
+PASS demo C
+PASS demo D
+=== PASS 1 CLEAN (40s)
+=== PASS 2
+test-health: 12/12
+reset done in 14s
+PASS demo A
+PASS demo B
+PASS demo C
+PASS demo D
+=== PASS 2 CLEAN (38s)

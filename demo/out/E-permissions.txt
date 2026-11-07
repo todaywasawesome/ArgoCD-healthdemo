@@ -1,0 +1,4 @@
+# demo-agent token, same REST calls the MCP server makes
+GET    config-demo      -> 200
+POST   config-demo/sync -> 200
+DELETE config-demo      -> 403   (expect 403)

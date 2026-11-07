@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+data:
+  resource.customizations.health.ConfigMap: |
+    hs = {}
+    hs.status = "Healthy"
+    hs.message = "ConfigMap ok"
+    local labels = obj.metadata and obj.metadata.labels
+    if labels ~= nil and labels["healthdemo/check"] == "true"
+       and obj.data ~= nil and obj.data.DEMO_STATE == "broken" then
+      hs.status = "Degraded"
+      hs.message = "DEMO_STATE is broken"
+    end
+    return hs
+  resource.customizations.health.example.io_Database: |
+    -- Degraded when Ready has not been True for more than 10 minutes.
+    -- Argo CD's Lua sandbox has no string or math library, and os.time{...} reads fields as
+    -- LOCAL time while os.date ignores "!" (UTC). So: compute the real UTC offset from local
+    -- wall-clock fields with integer arithmetic, format "now - 600s" as an RFC 3339 UTC string,
+    -- and compare strings (Zulu timestamps with the same layout sort chronologically).
+    -- ponytail: assumes lastTransitionTime is "YYYY-MM-DDTHH:MM:SSZ" (what Kubernetes writes);
+    -- fractional seconds or "+hh:mm" offsets would compare wrong.
+    local os = require("os")
+    local function floor(x) return x - x % 1 end
+    local function days_from_civil(y, m, d)
+      if m <= 2 then y = y - 1 end
+      local era = floor(y / 400)
+      local yoe = y - era * 400
+      local mp = (m + 9) % 12
+      local doy = floor((153 * mp + 2) / 5) + d - 1
+      local doe = yoe * 365 + floor(yoe / 4) - floor(yoe / 100) + doy
+      return era * 146097 + doe - 719468
+    end
+    local function utc_string(epoch)
+      local now = os.time()
+      local l = os.date("*t", now)
+      local offset = days_from_civil(l.year, l.month, l.day) * 86400
+                     + l.hour * 3600 + l.min * 60 + l.sec - now
+      return os.date("%Y-%m-%dT%H:%M:%SZ", epoch - offset)
+    end
+
+    hs = {}
+    hs.status = "Progressing"
+    hs.message = "Waiting for Ready condition"
+    if obj.status == nil or obj.status.conditions == nil then
+      return hs
+    end
+    for _, c in ipairs(obj.status.conditions) do
+      if c.type == "Ready" then
+        if c.status == "True" then
+          hs.status = "Healthy"
+          hs.message = c.message or "Ready"
+        elseif c.lastTransitionTime ~= nil and c.lastTransitionTime < utc_string(os.time() - 600) then
+          hs.status = "Degraded"
+          hs.message = "Ready has not been True since " .. c.lastTransitionTime .. " (more than 10 minutes)"
+        else
+          hs.message = "Ready is " .. tostring(c.status) .. " since " .. tostring(c.lastTransitionTime) .. " (Degraded after 10 minutes)"
+        end
+        return hs
+      end
+    end
+    return hs

@@ -1,0 +1,20 @@
+$ apply-config.sh ConfigMap
+configmap/argocd-cm patched
+$ scripts/health.sh config-demo
+app config-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  ConfigMap/demo-settings: Healthy - ConfigMap ok
+$ set-demo-state.sh broken
+pushed DEMO_STATE=broken to demo-live (0fa4ed6)
+$ argocd app sync config-demo --timeout 60 -o tree
+$ scripts/health.sh config-demo
+app config-demo: Synced / Degraded
+  operation: Succeeded - successfully synced (all tasks run)
+  ConfigMap/demo-settings: Degraded - DEMO_STATE is broken: set it to ok and sync again
+$ set-demo-state.sh ok
+pushed DEMO_STATE=ok to demo-live (7fdece1)
+$ argocd app sync config-demo --timeout 60 -o tree
+$ scripts/health.sh config-demo
+app config-demo: Synced / Healthy
+  operation: Succeeded - successfully synced (all tasks run)
+  ConfigMap/demo-settings: Healthy - ConfigMap ok
