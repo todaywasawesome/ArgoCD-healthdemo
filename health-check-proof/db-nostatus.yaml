@@ -1,0 +1,3 @@
+apiVersion: example.io/v1
+kind: Database
+metadata: {name: orders-db}
